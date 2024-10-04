@@ -14,7 +14,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     _deviceHeight = MediaQuery.of(context).size.height;
     _deviceWidth = MediaQuery.of(context).size.width;
-
+ 
     return Scaffold(
       appBar: AppBar(
           toolbarHeight: _deviceHeight * 0.15,
@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
             style: TextStyle(fontSize: 25, color: Colors.white),
           )),
       body: _taskList(),
+      floatingActionButton: _addTaskButton(),
     );
   }
 
@@ -38,6 +39,14 @@ class _HomePageState extends State<HomePage> {
           trailing: const Icon(Icons.check_box_outlined, color: Colors.blue),
         )
       ],
+    );
+  }
+
+  Widget _addTaskButton() {
+    return FloatingActionButton(
+      backgroundColor: Colors.blue,
+      onPressed: () {},
+      child: Icon(Icons.add),
     );
   }
 }
