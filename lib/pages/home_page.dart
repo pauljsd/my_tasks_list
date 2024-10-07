@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // ignore: unused_field
   late double _deviceHeight, _deviceWidth;
-  String todoTaskContent = "";
+  String _todoTaskContent = "";
   Box? _box;
 
   @override
@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
           toolbarHeight: _deviceHeight * 0.15,
           title: const Text(
-            'TO DO LIST',
+            'TRACK YOU DAY',
             style: TextStyle(fontSize: 25, color: Colors.white),
           )),
       // body: _tasksList(),
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
 
         // future: Future.delayed(Duration(seconds: 4)),
         builder: (BuildContext _context, AsyncSnapshot _snapshot) {
-          if (_snapshot.connectionState == ConnectionState.done) {
+          if (_snapshot.hasData) {
             _box = _snapshot.data;
 
             return _tasksList();
@@ -80,13 +80,76 @@ class _HomePageState extends State<HomePage> {
             title: Text(
               task.content,
               // "Good Good",
-              style: TextStyle(decoration: TextDecoration.lineThrough),
+              style: TextStyle(
+                  decoration: task.done ? TextDecoration.lineThrough : null),
             ),
             subtitle: Text(
               // DateTime.now().toString(),
               task.timestamp.toString(),
             ),
-            trailing: const Icon(Icons.check_box_outlined, color: Colors.blue),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          TextEditingController _editController =
+                              TextEditingController(text: task.content);
+
+                          return AlertDialog(
+                            title: const Text('Edit Task'),
+                            content: TextField(
+                              controller: _editController,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter new task content',
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    // Update the task content and save it to the box
+                                    task.content = _editController.text;
+                                    _box!.putAt(_index, task.toMap());
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Save'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.edit),
+                    color: Colors.blue),
+                Icon(
+                    task.done
+                        ? Icons.check_box_outlined
+                        : Icons.check_box_outline_blank,
+                    color: Colors.blue),
+              ],
+            ),
+            onTap: () {
+              task.done = !task.done;
+              _box!.putAt(
+                _index,
+                task.toMap(),
+              );
+              setState(() {});
+            },
+            onLongPress: () {
+              _box!.delete(_index);
+              setState(() {});
+            },
           );
         });
   }
@@ -115,11 +178,23 @@ class _HomePageState extends State<HomePage> {
             title: Text('Add to List'),
             content: TextField(
               keyboardType: TextInputType.text,
-              onChanged: (_value) {},
-              onSubmitted: (_value) {
+              onChanged: (_value) {
                 setState(() {
-                  todoTaskContent = _value;
+                  _todoTaskContent = _value;
                 });
+              },
+              onSubmitted: (_value) {
+                if (_todoTaskContent != null) {
+                  var task = Task(
+                      content: _todoTaskContent,
+                      timestamp: DateTime.now(),
+                      done: false);
+                  _box!.add(task.toMap());
+                  setState(() {
+                    Navigator.pop(context);
+                    _todoTaskContent = '';
+                  });
+                }
               },
             ),
           );
