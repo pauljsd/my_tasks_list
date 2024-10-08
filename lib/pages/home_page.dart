@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
+
 import 'package:my_task_list/models/task.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,13 +24,17 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-          toolbarHeight: _deviceHeight * 0.15,
+          toolbarHeight: _deviceHeight * 0.10,
           title: const Text(
-            'TRACK YOU DAY',
+            'TRACK YOUR DAY',
             style: TextStyle(fontSize: 25, color: Colors.white),
           )),
       // body: _tasksList(),
-      body: _tasksView(),
+      body: Container(
+        color: Colors.blue.withOpacity(0.3),
+        child: _tasksView(),
+      ),
+
       // body: const Text('hello'),
       floatingActionButton: _addTaskButton(),
     );
@@ -72,93 +78,88 @@ class _HomePageState extends State<HomePage> {
     print('I AM PRINTING HERE');
     print(tasks);
 
-    return ListView.builder(
-        itemCount: tasks.length,
-        itemBuilder: (BuildContext _context, int _index) {
-          var task = Task.fromMap(tasks[_index]);
-          return ListTile(
-            title: Text(
-              task.content,
-              // "Good Good",
-              style: TextStyle(
-                  decoration: task.done ? TextDecoration.lineThrough : null),
-            ),
-            subtitle: Text(
-              // DateTime.now().toString(),
-              task.timestamp.toString(),
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          TextEditingController _editController =
-                              TextEditingController(text: task.content);
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: tasks.length,
+            itemBuilder: (BuildContext _context, int _index) {
+              var task = Task.fromMap(tasks[_index]);
 
-                          return AlertDialog(
-                            title: const Text('Edit Task'),
-                            content: TextField(
-                              controller: _editController,
-                              decoration: const InputDecoration(
-                                hintText: 'Enter new task content',
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    // Update the task content and save it to the box
-                                    task.content = _editController.text;
-                                    _box!.putAt(_index, task.toMap());
-                                  });
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Save'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.edit),
-                    color: Colors.blue),
-                Icon(
-                    task.done
-                        ? Icons.check_box_outlined
-                        : Icons.check_box_outline_blank,
-                    color: Colors.blue),
-              ],
-            ),
-            onTap: () {
-              task.done = !task.done;
-              _box!.putAt(
-                _index,
-                task.toMap(),
+              return ListTile(
+                title: Text(
+                  task.content,
+                  style: TextStyle(
+                    decoration: task.done ? TextDecoration.lineThrough : null,
+                    fontSize: 20,
+                  ),
+                ),
+                subtitle: Text(
+                  task.done
+                      ? "Done ${DateFormat("d'th'-MMM-yyyy h:mma").format(task.timestamp)}"
+                      : "Task added on ${DateFormat("d'th'-MMM-yyyy h:mma").format(task.timestamp)}",
+                  style: TextStyle(
+                    color:
+                        task.done ? Colors.green : Colors.pink.withOpacity(0.8),
+                    fontSize: 14,
+                  ),
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        _editTaskDialog(task, _index);
+                      },
+                      icon: const Icon(Icons.edit),
+                      color: Colors.blue,
+                    ),
+                    Icon(
+                      task.done
+                          ? Icons.check_box_outlined
+                          : Icons.check_box_outline_blank,
+                      color: Colors.blue,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  task.done = !task.done;
+                  _box!.putAt(_index, task.toMap());
+                  setState(() {});
+                },
+                onLongPress: () {
+                  _box!.delete(_index);
+                  setState(() {});
+                },
               );
-              setState(() {});
             },
-            onLongPress: () {
-              _box!.delete(_index);
-              setState(() {});
-            },
-          );
-        });
+          ),
+        ),
+
+        //Delete button
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: TextButton(
+            onPressed: clearBox,
+            child: Text("Delete All Tasks"),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.blue,
+              // primary: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
-  // void clearBox() async {
-  //   var box = await Hive.openBox('tasks');
-  //   box.clear();
-  //   print('yes cleared');
-  // }
+//delete all task function
+  void clearBox() async {
+    var box = await Hive.openBox('tasks');
+    box.clear();
+    setState(() {});
+  }
 
   Widget _addTaskButton() {
     return FloatingActionButton(
@@ -199,5 +200,44 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         });
+  }
+
+//edit Task function
+  void _editTaskDialog(Task task, int index) {
+    TextEditingController _editController =
+        TextEditingController(text: task.content);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Edit Task'),
+          content: TextField(
+            controller: _editController,
+            decoration: const InputDecoration(
+              hintText: 'Enter new task content',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  task.content = _editController.text;
+                  _box!.putAt(index, task.toMap());
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
