@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:my_task_list/pages/homepage/controllers/clear_all_tasks.dart';
 
 import 'package:my_task_list/pages/homepage/models/task.dart';
-import 'package:my_task_list/pages/homepage/screens/widgets/delete_all_tasks_btn.dart';
-import 'package:my_task_list/pages/homepage/screens/widgets/pop_up_task_todo.dart';
-import 'package:my_task_list/pages/homepage/screens/widgets/task_list.dart';
-import 'package:my_task_list/pages/homepage/screens/widgets/task_view.dart';
+import 'package:my_task_list/pages/homepage/screens/home/widgets/app_bar_hamburger.dart';
+import 'package:my_task_list/pages/homepage/screens/home/widgets/delete_all_tasks_btn.dart';
+import 'package:my_task_list/pages/homepage/screens/home/widgets/pop_up_task_todo.dart';
+import 'package:my_task_list/pages/homepage/screens/home/widgets/task_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,12 +28,14 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-          leading: Text('HyHY'),
-          toolbarHeight: _deviceHeight * 0.10,
-          title: const Text(
-            'TRACK YOUR DAY',
-            style: TextStyle(fontSize: 25, color: Colors.white),
-          )),
+        leading: Hamburger(),
+        toolbarHeight: _deviceHeight * 0.10,
+        title: const Text(
+          'TRACK YOUR DAY',
+          style: TextStyle(fontSize: 25, color: Colors.white),
+        ),
+      ),
+
       // body: _tasksList(),
       body: Container(
         color: Colors.blue.withOpacity(0.3),

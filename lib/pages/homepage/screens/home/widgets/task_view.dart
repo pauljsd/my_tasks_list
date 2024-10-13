@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:my_task_list/pages/homepage/controllers/clear_all_tasks.dart';
 import 'package:my_task_list/pages/homepage/models/task.dart';
-import 'package:my_task_list/pages/homepage/screens/widgets/delete_all_tasks_btn.dart';
+import 'package:my_task_list/pages/homepage/screens/home/widgets/delete_all_tasks_btn.dart';
 import 'task_list.dart';
 
 class TasksView extends StatefulWidget {
