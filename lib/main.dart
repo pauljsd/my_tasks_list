@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_task_list/pages/home_page.dart';
+import 'package:my_task_list/pages/homepage/screens/home/home_page.dart';
 import "package:hive_flutter/adapters.dart";
 
 void main() async {
