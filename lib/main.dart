@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_task_list/pages/homepage/screens/home/home_page.dart';
 import "package:hive_flutter/adapters.dart";
+import 'package:my_task_list/pages/homepage/screens/instruction/instruction.dart';
 
 void main() async {
   await Hive.initFlutter("hive_boxes");
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: HomePage(),
+      // home: HomePage(),
+      home: InstructionManualPage(),
     );
   }
 }

@@ -49,7 +49,16 @@ class _TaskListState extends State<TaskList> {
             children: [
               IconButton(
                 onPressed: () {
-                  widget.onEdit(task, index);
+                  if (task.done) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text("You can't edit a done task."),
+                      duration:
+                          Duration(seconds: 2), // How long the pop-up lasts
+                    ));
+                  } else {
+                    widget.onEdit(task, index);
+                  }
                 },
                 icon: const Icon(Icons.edit),
                 color: Colors.blue,
@@ -63,7 +72,18 @@ class _TaskListState extends State<TaskList> {
             ],
           ),
           onTap: () {
-            task.done = !task.done;
+            // task.done = !task.done;
+            if (!task.done) {
+              task.done = true;
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  backgroundColor: Colors.red,
+                  content: Text("You can't undo a done task."),
+                  duration: Duration(seconds: 2), // How long the pop-up lasts
+                ),
+              );
+            }
             widget.box.putAt(index, task.toMap());
             setState(() {});
           },

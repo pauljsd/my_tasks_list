@@ -14,15 +14,15 @@ class _DeleteAllTasksState extends State<DeleteAllTasks> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(8.0),
       child: TextButton(
         onPressed: widget.onPressed,
         // onPressed: clearBox,
-        child: Text("Delete All Tasks"),
+        child: Text("Delete"),
         style: TextButton.styleFrom(
           backgroundColor: Colors.blue,
           // primary: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
         ),
       ),
     );

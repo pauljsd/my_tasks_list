@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
-class History extends StatelessWidget {
+class History extends StatefulWidget {
   const History({super.key});
 
+  @override
+  State<History> createState() => _HistoryState();
+}
+
+class _HistoryState extends State<History> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -14,7 +19,7 @@ class History extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-             icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back),
           ),
         ),
         body: Text('History'),

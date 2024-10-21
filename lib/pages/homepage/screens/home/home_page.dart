@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:my_task_list/commons/rounded_container.dart';
 import 'package:my_task_list/pages/homepage/controllers/clear_all_tasks.dart';
 
 import 'package:my_task_list/pages/homepage/models/task.dart';
@@ -69,11 +70,28 @@ class _HomePageState extends State<HomePage> {
             return Column(
               children: [
                 Expanded(child: TaskList(box: _box!, onEdit: _editTaskDialog)),
-                DeleteAllTasks(
-                  onPressed: () {
-                    ClearAllTasks().clearBox();
-                    setState(() {});
-                  },
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 40, 9),
+                  child: SizedBox(
+                    width: 300,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        TextButton(
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                            ),
+                            onPressed: null,
+                            child: Text('Move to History')),
+                        DeleteAllTasks(
+                          onPressed: () {
+                            ClearAllTasks().clearBox();
+                            setState(() {});
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             );
