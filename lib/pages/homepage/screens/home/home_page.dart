@@ -58,13 +58,17 @@ class _HomePageState extends State<HomePage> {
   Widget _tasksView() {
     return FutureBuilder(
         //this fetched the data in hive_boxes which will be == _snapshot???
-        future: Hive.openBox(
-            'tasks'), //this will return a box, that is why the snapshot is equated to a Box data type bro
+        future: Future.wait([
+          Hive.openBox('tasks'),
+          Hive.openBox('history'),
+        ]),
+        // future: Hive.openBox('history'),
 
         // future: Future.delayed(Duration(seconds: 4)),
         builder: (BuildContext _context, AsyncSnapshot _snapshot) {
           if (_snapshot.hasData) {
-            _box = _snapshot.data;
+            var taskBox = _snapshot.data![0];
+            _box = taskBox;
 
             // return _tasksList();
             return Column(
@@ -81,7 +85,7 @@ class _HomePageState extends State<HomePage> {
                             style: TextButton.styleFrom(
                               backgroundColor: Colors.blue,
                             ),
-                            onPressed: null,
+                            onPressed: _moveTasksToHistory,
                             child: Text('Move to History')),
                         DeleteAllTasks(
                           onPressed: () {
@@ -101,6 +105,57 @@ class _HomePageState extends State<HomePage> {
             );
           }
         });
+  }
+
+  void _moveTasksToHistory() async {
+    var tasksBox = Hive.box('tasks');
+    var historyBox = Hive.box('history');
+
+    // Get all tasks from the tasks box
+    final tasks = tasksBox.values.toList();
+
+    print(tasks);
+
+    //check if any of the task is done
+    bool isAnyDone = tasks.any((task) => task['done'] == true);
+
+    print(tasks);
+
+    if (!isAnyDone) {
+      print('No task is done. Stopping execution.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Hello!, none of the task is done')),
+      );
+      return;
+    }
+
+    // Get today's date as a key in the format of 'yyyy-MM-dd'
+    String currentDate = DateTime.now().toIso8601String().split('T')[0];
+
+    // Check if the history box already contains tasks for today's date
+    List<dynamic>? existingTasks = historyBox.get(currentDate);
+
+    // If tasks exist for today, append to the list, otherwise create a new list
+    List<dynamic> updatedTasks =
+        existingTasks != null ? List.from(existingTasks) : [];
+    updatedTasks.addAll(tasks);
+
+    // Save the updated task list to the history box under the current date
+    await historyBox.put(currentDate, updatedTasks);
+
+    // Clear all tasks from the tasks box
+    await tasksBox.clear();
+
+    // Show confirmation
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          backgroundColor: Colors.green,
+          content: Text('All tasks moved to history for $currentDate.')),
+    );
+
+    setState(() {});
   }
 
   void _showAddTaskDialog() {

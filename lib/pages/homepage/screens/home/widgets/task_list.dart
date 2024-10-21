@@ -19,7 +19,7 @@ class _TaskListState extends State<TaskList> {
   Widget build(BuildContext context) {
     List tasks = widget.box.values.toList();
 
-    print(tasks);
+    // print(tasks);
 
     return ListView.builder(
       // shrinkWrap: true,
@@ -75,6 +75,7 @@ class _TaskListState extends State<TaskList> {
             // task.done = !task.done;
             if (!task.done) {
               task.done = true;
+              task.timestamp = DateTime.now();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(

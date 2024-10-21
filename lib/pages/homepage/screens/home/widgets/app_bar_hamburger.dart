@@ -40,7 +40,7 @@ class Hamburger extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      History()), // Replace with your destination widget
+                      HistoryPage()), // Replace with your destination widget
             );
             break;
           case 1:
