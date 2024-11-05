@@ -8,6 +8,8 @@ class HistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var historyBox = Hive.box('history');
 
+    // print(historyBox);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('History'),
@@ -15,12 +17,16 @@ class HistoryPage extends StatelessWidget {
       body: ValueListenableBuilder(
         valueListenable: historyBox.listenable(),
         builder: (context, Box box, _) {
+          // print('See box content');
+          print(box);
           if (box.values.isEmpty) {
             return Center(child: Text('No history available.'));
           }
 
           // Get all the keys (dates or integers) from the history box
           List<dynamic> keys = box.keys.toList();
+
+          // print(keys);
 
           return ListView.builder(
             // itemCount: dates.length,
